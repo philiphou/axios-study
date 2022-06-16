@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axios 配置</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js" integrity="sha512-xIPqqrfvUAc/Cspuj7Bq0UtHNo/5qkdyngx6Vwt+tmbvTLDszzXM0G6c91LXmGrRx8KEPulT+AfOOez+TeVylg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="page-header">Axios基本使用</h2>
+        <button class='btn btn-primary'>发送GET请求</button>
+        <button class='btn btn-warning'>发送POST请求</button>
+        <button class='btn btn-success'>发送PUT请求</button>
+        <button class='btn btn-danger'>发送DELETE请求</button>
+    </div>
+
+    <script>
+        // 获取按钮：
+        const btns = document.querySelectorAll('button')
+            //  给第一个按钮绑定事件： 
+        btns[0].onclick = function() {
+                //  发送ajax 请求
+                axios({
+                    //  请求类型： 
+                    method: "GET",
+                    // URL: 给启动好的json server 发请求
+                    url: "  http://localhost:3000/posts/2",
+
+                }).then(response => {
+                    console.log(response.data)
+                })
+            }
+            //  给第二个按钮绑定事件： 添加一篇新的文章，应该发送POST 请求，路径： /posts
+        btns[1].onclick = function() {
+                //  发送ajax 请求
+                axios({
+                    //  请求类型： 
+                    method: "POST",
+                    // URL: 给启动好的json server 发请求
+                    url: "  http://localhost:3000/posts",
+                    // 设置请求体： 不需要写id
+                    data: {
+                        title: "荷塘月色",
+                        author: "朱自清"
+                    }
+
+                }).then(response => {
+                    console.log(response.data)
+                })
+            }
+            //  给第3个按钮绑定事件： 更新数据，id 为3 post, title 改为 “新荷塘月色”
+        btns[2].onclick = function() {
+                //  发送ajax 请求
+                axios({
+                    //  请求类型： 
+                    method: "PUT",
+                    // URL: 给启动好的json server 发请求
+                    url: "  http://localhost:3000/posts/3",
+                    // 设置请求体： 不需要写id
+                    data: {
+                        title: "新荷塘月色",
+                        author: "朱自清"
+                    }
+
+                }).then(response => {
+                    console.log(response)
+                })
+            }
+            //  给第4个按钮绑定事件： 删除 id 为1 的 POST
+        btns[3].onclick = function() {
+            //  发送ajax 请求
+            axios({
+                //  请求类型： 
+                method: "DELETE",
+                // URL: 给启动好的json server 发请求
+                url: "  http://localhost:3000/posts/1",
+
+
+            }).then(response => {
+                console.log(response)
+            })
+        }
+    </script>
+
+</body>
+
+</html>
