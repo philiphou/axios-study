@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>axios 拦截器</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js" integrity="sha512-xIPqqrfvUAc/Cspuj7Bq0UtHNo/5qkdyngx6Vwt+tmbvTLDszzXM0G6c91LXmGrRx8KEPulT+AfOOez+TeVylg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+<body>
+    <script>
+        //  config 就是配置对象 
+        axios.interceptors.request.use(function(config) {
+            //  可以修改confi 中的参数： 
+            config.params = {
+                a: "philip",
+                b: 20
+
+            }
+            console.log("请求拦截器成功");
+            return config
+        }, function(error) {
+            console.log("请求拦截器失败")
+            return Promise.reject(error)
+        })
+        axios.interceptors.response.use(function(response) {
+            console.log("请求拦截器成功");
+            return response
+        }, function(error) {
+            console.log("请求拦截器失败")
+            return Promise.reject(error)
+        })
+        axios({
+            url: "http://localhost:3000/comments",
+            method: "GET"
+
+        }).then(res => {
+            console.log(res.data)
+        }).catch(reason => {
+            console.log(" 失败了就报错")
+        })
+    </script>
+</body>
+
+</html>
