@@ -40,7 +40,6 @@
             while (chains.length > 0) {
                 //  从数组中取出回调函数
                 promise = promise.then(chains.shift(), chains.shift())
-
             }
             return promise
         }
