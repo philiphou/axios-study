@@ -83,4 +83,100 @@
                             }
                             //  为了显示取消效果，给 json-server 设置一个延时反应效果：  json-server --watch db.json -d 2000
                 </script>
-            
+* axios 取消请求的自定义实现： 
+                <script>
+                    //  构造函数
+                    function Axios(config) {
+                        this.config = config;
+                    }
+                    //  原型的request() 方法
+                    Axios.prototype.request = function(config) {
+                            return dispatchRequest(config)
+                        }
+                        //  dispatchRequest 函数
+                    function dispatchRequest(config) {
+                        return xhrAdapter(config)
+                    }
+                    //  CancelToken 构造函数
+                    function CancelToken(executor) {
+                        //  声明一个变量
+                        var resolvePromise
+                            //  为实例对象添加属性：
+                        this.promise = new Promise((resolve) => {
+                            //  将 resolve 方法 赋值给 resolvePromise 变量
+                            resolvePromise = resolve
+                        })
+                        //   调用 excutor 函数
+                        executor(function() {
+                            //  执行 resolvePromise 函数： 
+                            resolvePromise();
+                        })
+                    }
+                    // xhrAdapter()
+                    function xhrAdapter(config) {
+                        //  发送 ajax 请求 
+                        return new Promise((resolve, reject) => {
+                            //   1. 实例化对象
+                            const xhr = new XMLHttpRequest()
+                                // 2. 初始化： 
+                            xhr.open(config.method, config.url)
+                                // 3. 发送
+                            xhr.send()
+                                // 4. 处理结果：
+                            xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4) {
+                                    if (xhr.status >= 200 && xhr.status < 300) {
+                                        // 设置为成功状态
+                                        resolve({
+                                            status: xhr.status,
+                                           statusText: xhr.statusText
+                                        })
+                                    } else {
+                                        reject(new Error("请求失败"))
+                                    }
+                                }
+                            }
+                            //  关于取消请求的处理
+                            if (config.cancelToken) {
+                                //  对 cancelToken 实例对象身上的 promise对象指定成功的回调
+                                config.cancelToken.promise.then(value => {
+                                    xhr.abort()
+                                })
+                            }
+                        })
+                    }
+                    //创建 axios 函数
+                    const axios = Axios.prototype.request.bind(context)
+                    console.dir(axios)
+                    // 获取按钮，以上为模拟实现的代码
+                    const btns = document.querySelectorAll('button')
+                    let cancel = null
+                        // 发送请求
+                    btns[0].onclick = function() {
+                        //  检查上一次的请求是否已经完成
+                        if (cancel !== null) {
+                            //     //  取消上一次的请求
+                            cancel()
+                        }
+                        axios({
+                            method: "GET",
+                            url: "http://localhost:3000/comments",
+                            // 1. 添加配置对象的属性：
+                            cancelToken: new CancelToken(function(c) {
+                                //  3. 将 c 的值赋值给 cancel
+                                cancel = c
+                            })
+                        }).then(res => {
+                            console.log(res)
+                                //  请求完成后，cancel 重新赋值为 null
+                            cancel = null
+                        }).catch(e => {
+                            console.log('请求出错了 哈哈哈')
+                        })
+                    }
+                    //  给第二个按钮绑定事件 取消请求：
+                    btns[1].onclick = function() {
+                            cancel()
+                        }
+                        //  为了显示取消效果，给 json-server 设置一个延时反应效果：  json-server --watch db.json -d 2000
+                </script>
